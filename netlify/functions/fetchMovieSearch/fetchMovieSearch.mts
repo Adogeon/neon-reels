@@ -6,7 +6,7 @@ dotenv.config();
 
 export default async function (req: Request, context: Context) {
     try {
-        const response = await fetch(`https://api.themoviedb.org/3/search/movies?query=die%20hard`, {
+        const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=die%20hard`, {
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${process.env.MOVIE_API_AUTH_TOKEN}`,
@@ -18,6 +18,8 @@ export default async function (req: Request, context: Context) {
             data
         })
     } catch (error) {
-        console.log(error)
+        return new Response(error.toString(), {
+            status: 500,
+        })
     }
 }
