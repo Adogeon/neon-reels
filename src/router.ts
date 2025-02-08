@@ -1,10 +1,12 @@
-import { createWebHistory, createRouter } from "vue-router";
-
+import { type RouteRecordRaw, createWebHistory, createRouter } from "vue-router";
 import HomeView from "./pages/HomeView.vue"
 import MovieDetailView from "./pages/MovieDetailView.vue";
 
-const routes = [
-    { path: '/detail', component: MovieDetailView },
+const routes: Array<RouteRecordRaw> = [
+    {
+        path: '/details/:id',
+        component: MovieDetailView,
+    },
     { path: '/', component: HomeView }
 ]
 

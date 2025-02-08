@@ -1,14 +1,18 @@
-import { Movie } from "./Movie"
+import { MovieDetails, MovieSimple } from "./Movie"
 
 export interface MovieSearchResponseSuccess {
     page: number,
-    results: Array<Movie>
-    total_pages: 6,
-    total_results: 111
+    results: Array<MovieSimple>
+    total_pages: number,
+    total_results: number
 }
 
 export interface MovieSearchResponseError {
     success: boolean,
     status_code: number,
     status_message: string
+}
+
+export interface MovieDetailSuccess {
+    data: MovieDetails
 }

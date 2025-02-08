@@ -3,12 +3,8 @@
 </script>
 
 <template>
-   <p>
-    <strong>Current route path:</strong> {{ $route.fullPath }}
-  </p>
   <nav>
     <RouterLink to="/">Go to Home</RouterLink>
-    <RouterLink to="/detail">Go to Detail</RouterLink>
   </nav>
   <main>
     <RouterView />
