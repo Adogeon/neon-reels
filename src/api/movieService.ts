@@ -1,4 +1,4 @@
-import { MovieDetailSuccess, MovieSearchResponseError, MovieSearchResponseSuccess } from "../types/api";
+import { MovieSearchResponseError, MovieSearchResponseSuccess } from "../types/api";
 import { MovieDetails } from "../types/Movie";
 
 const BASE_API_URL = 'https://api.themoviedb.org/3/'

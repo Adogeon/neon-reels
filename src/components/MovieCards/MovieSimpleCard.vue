@@ -30,7 +30,7 @@ const toggleDetail = () => {
     </div>
 </template>
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
 .info {
     width: 100%;
     max-width: 300px;
