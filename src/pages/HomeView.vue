@@ -38,7 +38,7 @@ const handleSubmit = async (subject: string) => {
     </section>
 </template>
 
-<style lang="css" module>
+<style lang="scss" module>
 .resultGrid {
     display: flex;
     flex-wrap: wrap;
