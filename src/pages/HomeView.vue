@@ -32,15 +32,20 @@ const handleSubmit = async (subject: string) => {
         <h1>Something is horribly wrongs! Please try again</h1>
     </section>
     <section v-else id="result-area">
-        <div :class="$style.resultGrid">
+        <div class="result-grid">
            <MovieSimpleCard v-for="movie in movies" :data="movie" :key="`movie-${movie.id}`"/>
         </div>
     </section>
 </template>
 
-<style lang="scss" module>
-.resultGrid {
-    display: flex;
-    flex-wrap: wrap;
+<style lang="scss" scoped>
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  width:100%;
+  max-width: 1200px;
+  gap: 1rem;
+  padding: 1rem;
+  position: relative;
 }
 </style>
