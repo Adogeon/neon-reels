@@ -9,7 +9,8 @@ const routes: Array<RouteRecordRaw> = [
         component: MovieDetailView,
     },
     {
-        path: '/search', component: SearchResultView
+        path: '/search',
+        component: SearchResultView,
     },
 
     { path: '/', component: HomeView }

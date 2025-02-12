@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, watch} from 'vue';
+import {ref, watchEffect} from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 
 import useApiRequest from '../composables/useApiRequest';
@@ -11,18 +11,16 @@ import MovieSimpleCard from '../components/MovieCards/MovieSimpleCard.vue';
 
 const route = useRoute();
 const movies = ref<Array<MovieSimple>>([]);
-
 const {data:result, loading, error, execute} = useApiRequest(searchMovie)
 
-watch(() => route.query.s,
-    async newSearch => {
-        execute(newSearch);
+watchEffect( async () =>  {
+        await execute(route.query.s as string);
         if(!result.value || 'status_message' in result.value) {
             error.value = `error fetching movies:", ${result.value?.status_message}`;
             return;
         }
         movies.value = result.value.results;
-    }
+      }
 )
 
 const selectMovie = ref<MovieSimple | null>(null);

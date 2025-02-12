@@ -1,12 +1,19 @@
 <script setup lang="ts">
+import {useRouter} from 'vue-router';
+
+const router = useRouter();
 const searchTerm = defineModel<string>({ default: "" });
-defineEmits({
-  submit: (subject: string) => subject !== undefined,
-});
+
+const handleSubmit = () => {
+  if(searchTerm.value.trim()) {
+    router.replace({path:'/search', query: {s: searchTerm.value}})
+  }
+}
+
 </script>
 
 <template>
-  <form @submit.prevent="$emit('submit', searchTerm)">
+  <form @submit.prevent="handleSubmit">
     <input type="text" placeholder="movie-query" v-model.trim="searchTerm" />
     <button type="submit">Search</button>
   </form>

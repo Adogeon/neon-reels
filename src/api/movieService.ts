@@ -40,6 +40,7 @@ async function fetchAPIData<T>(url: string): APIResponse<T> {
 }
 
 export const searchMovie = async (query: string) => {
+    console.log(query);
     const url = SEARCH_MOVIE_URL + `?query=${encodeURIComponent(query)}&include_adult=false&language=en-US`
     return fetchAPIData<MovieSearchResponseSuccess>(url);
 }
