@@ -1,25 +1,29 @@
 <script setup lang="ts">
 import {ref, watch, watchEffect} from 'vue';
 import {useRoute} from 'vue-router';
-import { getMovieDetails } from '../api/movieService';
-import { MovieDetails } from '../types/Movie';
+import { getMovieDetails, getMovieRecommendation } from '../api/movieService';
+import MovieSimpleCard from "../components/MovieCards/MovieSimpleCard.vue";
+import { MovieDetails, MovieSimple } from '../types/Movie';
 import useApiRequest from '../composables/useApiRequest';
 
-const movie = ref<MovieDetails | null>(null)
-const {data, loading, error, execute} = useApiRequest(getMovieDetails);
+const movie = ref<MovieDetails | null>(null);
+const recommends = ref<Array<MovieSimple>>([]);
+const {data: detailData, loading: detailLoading, error, execute: getDetails} = useApiRequest(getMovieDetails);
+const {data: recommendData, loading: recommendLoading, error: recError, execute: getRecommend} = useApiRequest(getMovieRecommendation);
 const route = useRoute();
 
 const fetchData = async (id: string) => {
     movie.value = null;
     error.value = null;
-    execute(id);
+    getDetails(id);
+    getRecommend(id);
 }
 
 watchEffect(async () => {
-    await fetchData(route.params.id as string);
+    fetchData(route.params.id as string);
 })
 
-watch(() => data.value, (newData) => {
+watch(() => detailData.value, (newData) => {
     if(!newData || 'status_message' in newData) {
         error.value = `Error fetching movie: ${newData?.status_message}`;
     } else {
@@ -27,16 +31,25 @@ watch(() => data.value, (newData) => {
     }
 })
 
+watch(() => recommendData.value, (newData) => {
+  console.log(newData);
+  if(!newData || 'status_message' in newData) {
+    error.value = `Error get movie recommendation: ${newData?.status_message}`;
+  } else {
+    recommends.value = newData.results;
+  }
+} )
+
 </script>
 
 <template>
-    <section v-if="loading">
+    <section v-if="detailLoading">
         <h1>Loading ...</h1>
     </section>
     <section v-else-if="!movie">
         <h1>Something is horribly wrong, there is no movie!!!</h1>
     </section>
-    <section v-else>
+    <section v-else class="movie-detail">
         <h1>{{ movie.title }}</h1>
        <!-- Movie Header (Poster + Quick Details) -->
         <section class="movie-header">
@@ -61,7 +74,12 @@ watch(() => data.value, (newData) => {
             <h2>Summary</h2>
             <p>{{ movie.overview }}</p>
         </section>
-        
+        <section class="recommendations" v-if="recommends.length > 0">
+          <h2>Similar Movies</h2>
+          <section class="recommendation-grid">
+            <MovieSimpleCard v-for="movie in recommends" :data="movie" :key="movie.id"/>
+          </section>
+        </section>
     </section>
 </template>
 
@@ -78,13 +96,14 @@ watch(() => data.value, (newData) => {
 .movie-header {
   display: flex;
   gap: 2rem;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-evenly;
 
   .poster {
     flex-shrink: 0;
     img {
-      width: 200px;
-      border-radius: 10px;
+      width: 300px;
+      height: 100%;
     }
   }
 
@@ -122,11 +141,15 @@ watch(() => data.value, (newData) => {
   }
 }
 
-.recommendations {
-  .recommendation-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 1rem;
+.recommendation-grid {
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  
+  .movie-card {
+    min-width: 200px;
   }
 }
 

@@ -41,11 +41,16 @@ async function fetchAPIData<T>(url: string): APIResponse<T> {
 
 export const searchMovie = async (query: string) => {
     console.log(query);
-    const url = SEARCH_MOVIE_URL + `?query=${encodeURIComponent(query)}&include_adult=false&language=en-US`
+    const url = SEARCH_MOVIE_URL + `?query=${encodeURIComponent(query)}&include_adult=false&language=en-US`;
     return fetchAPIData<MovieSearchResponseSuccess>(url);
 }
 
 export const getMovieDetails = async (id: string) => {
-    const url = GET_MOVIE_DETAIL_URL + `${id}`
+    const url = GET_MOVIE_DETAIL_URL + `${id}`;
     return fetchAPIData<MovieDetails>(url);
+}
+
+export const getMovieRecommendation = async (id: string) => {
+    const url = GET_MOVIE_DETAIL_URL + `${id}/recommendations`;
+    return fetchAPIData<MovieSearchResponseSuccess>(url);
 }
