@@ -49,22 +49,24 @@ watch(() => detailData.value, (newData) => {
         <h1>Something is horribly wrong, there is no movie!!!</h1>
     </section>
     <section v-else class="movie-detail">
-        <h1>{{ movie.title }}</h1>
-       <!-- Movie Header (Poster + Quick Details) -->
-        <section class="movie-header">
-            <div class="poster">
-                <img :src="`https://image.tmdb.org/t/p/w500/${movie.poster_path}`" alt="Movie Poster"/>
-            </div>
-            <div class="movie-info">
-                <div class="tagline">{{ movie.tagline }}</div>
-                <div class="genres">
-                    <strong>Genres: </strong> 
+      <!-- Movie Header (Poster + Quick Details) -->
+      <section class="movie-header">
+        <div class="poster">
+          <img :src="`https://image.tmdb.org/t/p/w500/${movie.poster_path}`" alt="Movie Poster"/>
+        </div>
+        <div class="movie-info">
+                <h1>{{ movie.title }}</h1>
+                <section class="movie-meta">
+                  <span class="release-date">{{ movie.release_date }}</span> |
+                  <span class="runtime">{{ movie.runtime }} min</span> |
+                  <span class="genres"> 
                     {{ movie.genres.map(g => g.name).join(', ') }}
-                </div>
-                <div class="release-date"><strong>Release Date:</strong> {{ movie.release_date }}</div>
+                  </span>
+                </section>
                 <div class="rating"><strong>Rating:</strong> ⭐ {{ movie.vote_average }}/10 ({{ movie.vote_count }} votes)</div>
-                <div class="runtime"><strong>Runtime:</strong> {{ movie.runtime }} min</div>
+                
                 <section class="plot-summary">
+                    <div class="tagline">{{ movie.tagline }}</div>
                     <h2>Summary</h2>
                     <p>{{ movie.overview }}</p>
                 </section>
@@ -108,7 +110,7 @@ watch(() => detailData.value, (newData) => {
 .movie-header {
   display: flex;
   gap: 2rem;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-evenly;
 
   .poster {
@@ -123,6 +125,31 @@ watch(() => detailData.value, (newData) => {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+
+    .movie-meta {
+      font-size: 0.9rem;
+      color: #bbb;
+      margin-bottom: 1rem;
+
+      span {
+        display: inline-block;
+        margin: 0 5px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+
+    .poster {
+      width: 80%;
+    }
+
+    .movie-info {
+      width: 100%;
+      text-align: center;
+    }
   }
 }
 
@@ -130,6 +157,11 @@ watch(() => detailData.value, (newData) => {
   background: rgba(50, 50, 50, 0.8);
   padding: 1rem;
   border-radius: 10px;
+  text-align: left;
+  
+  .tagline {
+    text-align: center;
+  }
 }
 
 .expandable-details {
