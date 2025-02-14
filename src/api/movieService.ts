@@ -1,4 +1,4 @@
-import { MovieSearchResponseError, MovieSearchResponseSuccess } from "../types/api";
+import { GetMovieDetailsResponseSuccess, MovieSearchResponseError, MovieSearchResponseSuccess } from "../types/api";
 import { MovieDetails } from "../types/Movie";
 
 const BASE_API_URL = 'https://api.themoviedb.org/3/'
@@ -46,8 +46,8 @@ export const searchMovie = async (query: string) => {
 }
 
 export const getMovieDetails = async (id: string) => {
-    const url = GET_MOVIE_DETAIL_URL + `${id}`;
-    return fetchAPIData<MovieDetails>(url);
+    const url = GET_MOVIE_DETAIL_URL + `${id}?append_to_response=recommendations,credits`;
+    return fetchAPIData<GetMovieDetailsResponseSuccess>(url);
 }
 
 export const getMovieRecommendation = async (id: string) => {

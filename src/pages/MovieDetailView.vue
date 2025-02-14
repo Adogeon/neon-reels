@@ -1,22 +1,26 @@
 <script setup lang="ts">
 import {ref, watch, watchEffect} from 'vue';
 import {useRoute} from 'vue-router';
-import { getMovieDetails, getMovieRecommendation } from '../api/movieService';
+
+import { getMovieDetails } from '../api/movieService';
+
+import { type MovieDetails, type MovieSimple } from '../types/Movie';
+import { type Credits } from '../types/People';
+
 import MovieSimpleCard from "../components/MovieCards/MovieSimpleCard.vue";
-import { MovieDetails, MovieSimple } from '../types/Movie';
 import useApiRequest from '../composables/useApiRequest';
+
 
 const movie = ref<MovieDetails | null>(null);
 const recommends = ref<Array<MovieSimple>>([]);
+const people = ref<Credits | null>(null);
 const {data: detailData, loading: detailLoading, error, execute: getDetails} = useApiRequest(getMovieDetails);
-const {data: recommendData, loading: recommendLoading, error: recError, execute: getRecommend} = useApiRequest(getMovieRecommendation);
 const route = useRoute();
 
 const fetchData = async (id: string) => {
     movie.value = null;
     error.value = null;
     getDetails(id);
-    getRecommend(id);
 }
 
 watchEffect(async () => {
@@ -24,21 +28,16 @@ watchEffect(async () => {
 })
 
 watch(() => detailData.value, (newData) => {
+    console.log(newData);
     if(!newData || 'status_message' in newData) {
         error.value = `Error fetching movie: ${newData?.status_message}`;
     } else {
-        movie.value = newData
+        const {recommendations, credits, ...rest} = newData;
+        movie.value = rest;
+        recommends.value = recommendations.results;
+        people.value = credits;
     }
 })
-
-watch(() => recommendData.value, (newData) => {
-  console.log(newData);
-  if(!newData || 'status_message' in newData) {
-    error.value = `Error get movie recommendation: ${newData?.status_message}`;
-  } else {
-    recommends.value = newData.results;
-  }
-} )
 
 </script>
 
@@ -65,14 +64,27 @@ watch(() => recommendData.value, (newData) => {
                 <div class="release-date"><strong>Release Date:</strong> {{ movie.release_date }}</div>
                 <div class="rating"><strong>Rating:</strong> ⭐ {{ movie.vote_average }}/10 ({{ movie.vote_count }} votes)</div>
                 <div class="runtime"><strong>Runtime:</strong> {{ movie.runtime }} min</div>
+                <section class="plot-summary">
+                    <h2>Summary</h2>
+                    <p>{{ movie.overview }}</p>
+                </section>
                 <div v-if="movie.homepage">
                     <a :href="movie.homepage" target="_blank">Official Site</a>
                 </div>
             </div>
         </section>
-        <section class="plot-summary">
-            <h2>Summary</h2>
-            <p>{{ movie.overview }}</p>
+        <section class="movie-cast" v-if="people && people?.cast.length > 0">
+          <h2>Cast</h2>
+          <div class="cast-list">
+            <div class="cast-member" v-for="member in people.cast" :key="member.id">
+              <img 
+                :src="member.profile_path ? `https://image.tmdb.org/t/p/w185/${member.profile_path}` : 'https://placehold.co/185x278?text=No Image&font=roboto'" 
+                :alt="member.name"
+              />
+              <p class="actor-name">{{ member.name }}</p>
+              <p class="character-name">as {{ member.character }}</p>
+            </div>
+          </div>
         </section>
         <section class="recommendations" v-if="recommends.length > 0">
           <h2>Similar Movies</h2>
@@ -132,12 +144,52 @@ watch(() => recommendData.value, (newData) => {
   }
 }
 
-.credits {
+.movie-cast {
+  margin-top: 2rem;
+
   h2 {
-    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
   }
-  ul {
-    padding-left: 1.5rem;
+
+  .cast-list {
+    display: flex;
+    overflow-x: auto; // Enables horizontal scrolling
+    gap: 1rem;
+    padding-bottom: 1rem; // Space for scrollbar if needed
+    scrollbar-width: thin; // For Firefox
+    scrollbar-color: rgba(255, 255, 255, 0.5) transparent; 
+
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+    }
+  }
+
+  .cast-member {
+    flex: 0 0 120px; // Controls the width of each cast card
+    text-align: center;
+
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .actor-name {
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+
+    .character-name {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
   }
 }
 
