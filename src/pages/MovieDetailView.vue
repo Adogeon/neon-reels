@@ -28,7 +28,6 @@ watchEffect(async () => {
 })
 
 watch(() => detailData.value, (newData) => {
-    console.log(newData);
     if(!newData || 'status_message' in newData) {
         error.value = `Error fetching movie: ${newData?.status_message}`;
     } else {
