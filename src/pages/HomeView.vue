@@ -53,8 +53,9 @@ const upComingMovies = computed<Array<MovieSimple>>(() => upComingResult.value?.
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  width: min(90vw, 1200px);
   text-align: center;
+  padding: 2rem;
 }
 
 .title {
@@ -65,15 +66,17 @@ const upComingMovies = computed<Array<MovieSimple>>(() => upComingResult.value?.
   margin-bottom: 1.5rem;
 }
 
-.recommendation-grid {
+.recommendations {
   width: 100%;
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  white-space: nowrap;
+  .recommendation-grid {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    white-space: nowrap;
   
-  .movie-card {
-    min-width: 200px;
+    .movie-card {
+      min-width: 200px;
+    }
   }
 }
 
