@@ -1,7 +1,8 @@
 <script setup lang="tsx">
 import { type MovieSimple } from '../../types/Movie';
 
-const { movies } = defineProps<{
+const { title, movies } = defineProps<{
+    title: string
     movies: Array<MovieSimple>
 }>()
 
@@ -9,6 +10,7 @@ const { movies } = defineProps<{
 
 <template>
     <section class="hor-list-container">
+        <h2>{{ title }}</h2>
         <section class="movie-hor-list">
             <MovieSimpleCard v-for="movie in movies" :data="movie" :key="movie.id" />
         </section>

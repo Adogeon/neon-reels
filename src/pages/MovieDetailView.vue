@@ -1,99 +1,93 @@
 <script setup lang="ts">
-import {ref, watch, watchEffect} from 'vue';
-import {useRoute} from 'vue-router';
+import { ref, watch, watchEffect } from 'vue';
+import { useRoute } from 'vue-router';
 
 import { getMovieDetails } from '../api/movieService';
 
 import { type MovieDetails, type MovieSimple } from '../types/Movie';
 import { type Credits } from '../types/People';
 
-import MovieSimpleCard from "../components/MovieCards/MovieSimpleCard.vue";
 import useApiRequest from '../composables/useApiRequest';
+import MovieHorList from '../components/MovieHorList/MovieHorList.vue';
 
 
 const movie = ref<MovieDetails | null>(null);
 const recommends = ref<Array<MovieSimple>>([]);
 const people = ref<Credits | null>(null);
-const {data: detailData, loading: detailLoading, error, execute: getDetails} = useApiRequest(getMovieDetails);
+const { data: detailData, loading: detailLoading, error, execute: getDetails } = useApiRequest(getMovieDetails);
 const route = useRoute();
 
 const fetchData = async (id: string) => {
-    movie.value = null;
-    error.value = null;
-    getDetails(id);
+  movie.value = null;
+  error.value = null;
+  getDetails(id);
 }
 
 watchEffect(async () => {
-    fetchData(route.params.id as string);
+  fetchData(route.params.id as string);
 })
 
 watch(() => detailData.value, (newData) => {
-    if(!newData || 'status_message' in newData) {
-        error.value = `Error fetching movie: ${newData?.status_message}`;
-    } else {
-        const {recommendations, credits, ...rest} = newData;
-        movie.value = rest;
-        recommends.value = recommendations.results;
-        people.value = credits;
-    }
+  if (!newData || 'status_message' in newData) {
+    error.value = `Error fetching movie: ${newData?.status_message}`;
+  } else {
+    const { recommendations, credits, ...rest } = newData;
+    movie.value = rest;
+    recommends.value = recommendations.results;
+    people.value = credits;
+  }
 })
 
 </script>
 
 <template>
-    <section v-if="detailLoading">
-        <h1>Loading ...</h1>
-    </section>
-    <section v-else-if="!movie">
-        <h1>Something is horribly wrong, there is no movie!!!</h1>
-    </section>
-    <section v-else class="movie-detail">
-      <!-- Movie Header (Poster + Quick Details) -->
-      <section class="movie-header">
-        <div class="poster">
-          <img :src="`https://image.tmdb.org/t/p/w500/${movie.poster_path}`" alt="Movie Poster"/>
+  <section v-if="detailLoading">
+    <h1>Loading ...</h1>
+  </section>
+  <section v-else-if="!movie">
+    <h1>Something is horribly wrong, there is no movie!!!</h1>
+  </section>
+  <section v-else class="movie-detail">
+    <!-- Movie Header (Poster + Quick Details) -->
+    <section class="movie-header">
+      <div class="poster">
+        <img :src="`https://image.tmdb.org/t/p/w500/${movie.poster_path}`" alt="Movie Poster" />
+      </div>
+      <div class="movie-info">
+        <h1>{{ movie.title }}</h1>
+        <section class="movie-meta">
+          <span class="release-date">{{ movie.release_date }}</span> |
+          <span class="runtime">{{ movie.runtime }} min</span> |
+          <span class="genres">
+            {{movie.genres.map(g => g.name).join(', ')}}
+          </span>
+        </section>
+        <div class="rating"><strong>Rating:</strong> ⭐ {{ movie.vote_average }}/10 ({{ movie.vote_count }} votes)</div>
+
+        <section class="plot-summary">
+          <div class="tagline">{{ movie.tagline }}</div>
+          <h2>Summary</h2>
+          <p>{{ movie.overview }}</p>
+        </section>
+        <div v-if="movie.homepage">
+          <a :href="movie.homepage" target="_blank">Official Site</a>
         </div>
-        <div class="movie-info">
-                <h1>{{ movie.title }}</h1>
-                <section class="movie-meta">
-                  <span class="release-date">{{ movie.release_date }}</span> |
-                  <span class="runtime">{{ movie.runtime }} min</span> |
-                  <span class="genres"> 
-                    {{ movie.genres.map(g => g.name).join(', ') }}
-                  </span>
-                </section>
-                <div class="rating"><strong>Rating:</strong> ⭐ {{ movie.vote_average }}/10 ({{ movie.vote_count }} votes)</div>
-                
-                <section class="plot-summary">
-                    <div class="tagline">{{ movie.tagline }}</div>
-                    <h2>Summary</h2>
-                    <p>{{ movie.overview }}</p>
-                </section>
-                <div v-if="movie.homepage">
-                    <a :href="movie.homepage" target="_blank">Official Site</a>
-                </div>
-            </div>
-        </section>
-        <section class="movie-cast" v-if="people && people?.cast.length > 0">
-          <h2>Cast</h2>
-          <div class="cast-list">
-            <div class="cast-member" v-for="member in people.cast" :key="member.id">
-              <img 
-                :src="member.profile_path ? `https://image.tmdb.org/t/p/w185/${member.profile_path}` : 'https://placehold.co/185x278?text=No Image&font=roboto'" 
-                :alt="member.name"
-              />
-              <p class="actor-name">{{ member.name }}</p>
-              <p class="character-name">as {{ member.character }}</p>
-            </div>
-          </div>
-        </section>
-        <section class="recommendations" v-if="recommends.length > 0">
-          <h2>Similar Movies</h2>
-          <section class="recommendation-grid">
-            <MovieSimpleCard v-for="movie in recommends" :data="movie" :key="movie.id"/>
-          </section>
-        </section>
+      </div>
     </section>
+    <section class="movie-cast" v-if="people && people?.cast.length > 0">
+      <h2>Cast</h2>
+      <div class="cast-list">
+        <div class="cast-member" v-for="member in people.cast" :key="member.id">
+          <img
+            :src="member.profile_path ? `https://image.tmdb.org/t/p/w185/${member.profile_path}` : 'https://placehold.co/185x278?text=No Image&font=roboto'"
+            :alt="member.name" />
+          <p class="actor-name">{{ member.name }}</p>
+          <p class="character-name">as {{ member.character }}</p>
+        </div>
+      </div>
+    </section>
+    <MovieHorList v-if="recommends.length > 0" title="Similar Movies" :movies="recommends" />
+  </section>
 </template>
 
 <style lang="scss" scoped>
@@ -114,6 +108,7 @@ watch(() => detailData.value, (newData) => {
 
   .poster {
     flex-shrink: 0;
+
     img {
       width: 300px;
       height: 100%;
@@ -157,7 +152,7 @@ watch(() => detailData.value, (newData) => {
   padding: 1rem;
   border-radius: 10px;
   text-align: left;
-  
+
   .tagline {
     text-align: center;
   }
@@ -189,7 +184,7 @@ watch(() => detailData.value, (newData) => {
     gap: 1rem;
     padding-bottom: 1rem; // Space for scrollbar if needed
     scrollbar-width: thin; // For Firefox
-    scrollbar-color: rgba(255, 255, 255, 0.5) transparent; 
+    scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
 
     &::-webkit-scrollbar {
       height: 8px;
@@ -223,18 +218,4 @@ watch(() => detailData.value, (newData) => {
     }
   }
 }
-
-.recommendation-grid {
-  width: 100%;
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  white-space: nowrap;
-  
-  .movie-card {
-    min-width: 200px;
-  }
-}
-
 </style>
-

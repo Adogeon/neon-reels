@@ -51,7 +51,7 @@ export const getMovieDetails = async (id: string) => {
     return fetchAPIData<MovieDetailsResponse>(url);
 }
 
-export const getUpComingMovie = async () => {
+export const getUpcomingMovie = async () => {
     const url = GET_UPCOMING_MOVIE_LIST_URL;
     return fetchAPIData<MovieListResponse>(url);
 }
