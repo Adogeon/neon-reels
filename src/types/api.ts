@@ -1,23 +1,19 @@
 import { MovieDetails, MovieSimple } from "./Movie"
-import { Credits, PeopleSimple } from "./People"
-export interface MovieSearchResponseSuccess {
+import { Credits } from "./People"
+
+export interface MovieListResponse {
     page: number,
     results: Array<MovieSimple>
     total_pages: number,
     total_results: number
 }
-
-export interface MovieSearchResponseError {
+export interface APIResponseError {
     success: boolean,
     status_code: number,
     status_message: string
 }
 
-export interface GetMovieDetailsResponseSuccess extends MovieDetails {
-    recommendations: MovieSearchResponseSuccess;
+export interface MovieDetailsResponse extends MovieDetails {
+    recommendations: MovieListResponse;
     credits: Credits
-}
-
-export interface MovieDetailSuccess {
-    data: MovieDetails
 }

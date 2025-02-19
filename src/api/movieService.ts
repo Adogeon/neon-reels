@@ -1,4 +1,4 @@
-import { GetMovieDetailsResponseSuccess, MovieSearchResponseError, MovieSearchResponseSuccess } from "../types/api";
+import { APIResponseError, MovieListResponse, MovieDetailsResponse } from "../types/api";
 
 const BASE_API_URL = 'https://api.themoviedb.org/3/'
 const SEARCH_MOVIE_URL = BASE_API_URL + 'search/movie'
@@ -24,7 +24,7 @@ async function fetchAPIData<T>(url: string): APIResponse<T> {
         const result = await response.json();
 
         if ("status_code" in result) {
-            throw result as MovieSearchResponseError
+            throw result as APIResponseError
         } else {
             return result as T
         }
@@ -43,25 +43,25 @@ async function fetchAPIData<T>(url: string): APIResponse<T> {
 
 export const searchMovie = async (query: string) => {
     const url = SEARCH_MOVIE_URL + `?query=${encodeURIComponent(query)}&include_adult=false&language=en-US`;
-    return fetchAPIData<MovieSearchResponseSuccess>(url);
+    return fetchAPIData<MovieListResponse>(url);
 }
 
 export const getMovieDetails = async (id: string) => {
     const url = GET_MOVIE_DETAIL_URL + `${id}?append_to_response=recommendations,credits`;
-    return fetchAPIData<GetMovieDetailsResponseSuccess>(url);
+    return fetchAPIData<MovieDetailsResponse>(url);
 }
 
 export const getUpComingMovie = async () => {
     const url = GET_UPCOMING_MOVIE_LIST_URL;
-    return fetchAPIData<MovieSearchResponseSuccess>(url);
+    return fetchAPIData<MovieListResponse>(url);
 }
 
 export const getNowPlaying = async () => {
     const url = GET_NOW_PLAYING_MOVIE_LIST_URL;
-    return fetchAPIData<MovieSearchResponseSuccess>(url);
+    return fetchAPIData<MovieListResponse>(url);
 }
 
 export const getPopular = async () => {
     const url = GET_POPULAR_MOVIE_LIST_URL;
-    return fetchAPIData<MovieSearchResponseSuccess>(url);
+    return fetchAPIData<MovieListResponse>(url);
 }
