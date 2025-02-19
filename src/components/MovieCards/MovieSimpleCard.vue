@@ -1,5 +1,4 @@
 <script setup lang="tsx">
-import {ref} from 'vue';
 import { type MovieSimple } from '../../types/Movie';
 const {data} = defineProps<{
     data: MovieSimple
