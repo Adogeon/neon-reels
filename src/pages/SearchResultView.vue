@@ -27,6 +27,9 @@ const selectMovie = ref<MovieSimple | null>(null);
 const toggleMovieDetails = (movie: MovieSimple) => {
   selectMovie.value = movie;
 }
+
+
+
 </script>
 
 <template>
@@ -77,7 +80,7 @@ const toggleMovieDetails = (movie: MovieSimple) => {
 
 .result-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   width: 100%;
   gap: 1rem;
   position: relative;
@@ -92,7 +95,7 @@ const toggleMovieDetails = (movie: MovieSimple) => {
   }
 
   .result-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 0.5rem;
   }
 }
