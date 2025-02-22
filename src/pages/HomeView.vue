@@ -4,8 +4,8 @@ import { getPopular, getNowPlaying, getUpcomingMovie } from '../api/movieService
 import useApiRequest from '../composables/useApiRequest';
 import { computed, watchEffect } from 'vue';
 import { MovieSimple } from '../types/Movie';
-import SearchBar from '../components/SearchBar.vue';
 import MovieHorList from '../components/MovieHorList/MovieHorList.vue';
+import NavBar from "../components/NavBar/NavCore.vue";
 
 const { data: popularResult, error: popularError, loading: popularLoading, execute: fetchPopular } = useApiRequest(getPopular);
 const { data: nowPlayingResult, error: nowPlayingError, loading: nowPlayingLoading, execute: fetchNowPlaying } = useApiRequest(getNowPlaying);
@@ -23,6 +23,7 @@ const upcomingMovies = computed<Array<MovieSimple>>(() => upcomingResult.value?.
 </script>
 
 <template>
+  <NavBar />
   <div class="home-container">
     <h1>Neon Reels</h1>
     <SearchBar />

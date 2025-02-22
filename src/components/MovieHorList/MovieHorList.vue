@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { useRouter } from 'vue-router'
 import { type MovieSimple } from '../../types/Movie';
-import MovieSimpleCard from '../MovieCards/MovieSimpleCard.vue';
+import SimpleCard from '../SimpleCard/SimpleCard.vue';
 
 const { title, movies } = defineProps<{
     title: string
@@ -16,7 +16,7 @@ const router = useRouter();
     <section class="hor-list-container">
         <h2>{{ title }}</h2>
         <section class="movie-hor-list">
-            <MovieSimpleCard v-for="movie in movies" :data="movie" :key="movie.id"
+            <SimpleCard v-for="movie in movies" :poster="movie.poster_path" :title="movie.title" :key="movie.id"
                 @click="router.push({ path: `/details/${movie.id}` })" />
         </section>
     </section>
@@ -32,7 +32,7 @@ const router = useRouter();
         overflow-x: auto;
         white-space: nowrap;
 
-        .movie-card {
+        .card {
             min-width: 200px;
         }
     }
