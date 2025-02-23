@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 
 import useApiRequest from '../composables/useApiRequest';
@@ -11,10 +11,11 @@ import SimpleCard from '../components/SimpleCard/SimpleCard.vue';
 
 const route = useRoute();
 const movies = ref<Array<MovieSimple>>([]);
+const currentPage = ref(1);
 const { data: result, loading, error, execute } = useApiRequest(searchMovie)
 
 watchEffect(async () => {
-  await execute(route.query.s as string);
+  await execute(route.query.s as string, currentPage.value);
   if (!result.value || 'status_message' in result.value) {
     error.value = `error fetching movies:", ${result.value?.status_message}`;
     return;
@@ -28,7 +29,19 @@ const toggleMovieDetails = (movie: MovieSimple) => {
   selectMovie.value = movie;
 }
 
+const totalPages = computed(() => result.value?.total_pages || 0);
 
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
 
 </script>
 
@@ -52,6 +65,11 @@ const toggleMovieDetails = (movie: MovieSimple) => {
     <div class="result-grid">
       <SimpleCard v-for="movie in movies" :poster="movie.poster_path" :title="movie.title" :key="`movie-${movie.id}`"
         @click="toggleMovieDetails(movie)" />
+    </div>
+    <div class="pagination">
+      <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
     </div>
   </section>
 </template>

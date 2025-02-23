@@ -41,8 +41,9 @@ async function fetchAPIData<T>(url: string): APIResponse<T> {
     }
 }
 
-export const searchMovie = async (query: string) => {
-    const url = SEARCH_MOVIE_URL + `?query=${encodeURIComponent(query)}&include_adult=false&language=en-US`;
+export const searchMovie = async (query: string, page?: number) => {
+    const pageParam = `&page=${page ?? 1}`
+    const url = SEARCH_MOVIE_URL + `?query=${encodeURIComponent(query)}&include_adult=false&language=en-US${pageParam}`;
     return fetchAPIData<MovieListResponse>(url);
 }
 
