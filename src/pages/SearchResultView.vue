@@ -16,6 +16,7 @@ const { data: result, loading, error, execute } = useApiRequest(searchMovie)
 
 watchEffect(async () => {
   await execute(route.query.s as string, currentPage.value);
+  console.log(currentPage.value)
   if (!result.value || 'status_message' in result.value) {
     error.value = `error fetching movies:", ${result.value?.status_message}`;
     return;
@@ -30,7 +31,24 @@ const toggleMovieDetails = (movie: MovieSimple) => {
 }
 
 const totalPages = computed(() => result.value?.total_pages || 0);
-
+const visiblePages = computed(() => {
+  if (totalPages.value <= 5)
+    return [1, 2, 3, 4, 5]
+  else {
+    let pages: Array<number> = []
+    if (currentPage.value <= 2) {
+      pages = [currentPage.value, currentPage.value + 1, currentPage.value + 2]
+    } else if (currentPage.value === totalPages.value) {
+      pages = [currentPage.value - 2, currentPage.value - 1, currentPage.value]
+    } else if (currentPage.value === totalPages.value - 1) {
+      pages = [currentPage.value - 2, currentPage.value - 1, currentPage.value, currentPage.value + 1]
+    }
+    else {
+      pages = [currentPage.value - 2, currentPage.value - 1, currentPage.value, currentPage.value + 1, currentPage.value + 2]
+    }
+    return pages;
+  }
+})
 const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
@@ -67,9 +85,18 @@ const prevPage = () => {
         @click="toggleMovieDetails(movie)" />
     </div>
     <div class="pagination">
-      <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+      <button @click="prevPage" :disabled="currentPage === 1">
+        < </button>
+
+          <button @click="() => { currentPage = 1 }" v-if="currentPage > 3 && totalPages > 5">1</button>
+          <span v-if="currentPage > 3 && totalPages > 5">...</span>
+          <button v-for="page in visiblePages" :key="`page-${page}`" @click="() => currentPage = page">
+            {{ page }}
+          </button>
+          <span v-if="currentPage < totalPages - 2 && totalPages > 5">...</span>
+          <button @click="() => { currentPage = totalPages }" v-if="currentPage < totalPages - 2 && totalPages > 5">{{
+            totalPages }}</button>
+          <button @click="nextPage" :disabled="currentPage === totalPages">></button>
     </div>
   </section>
 </template>
