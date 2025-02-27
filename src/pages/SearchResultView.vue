@@ -50,22 +50,9 @@ const toggleMovieDetails = (movie: MovieSimple) => {
 
 const totalPages = computed(() => result.value?.total_pages || 0);
 const visiblePages = computed(() => {
-  if (totalPages.value <= 5)
-    return [1, 2, 3, 4, 5]
-  else {
-    let pages: Array<number> = []
-    if (currentPage.value <= 2) {
-      pages = [currentPage.value, currentPage.value + 1, currentPage.value + 2]
-    } else if (currentPage.value === totalPages.value) {
-      pages = [currentPage.value - 2, currentPage.value - 1, currentPage.value]
-    } else if (currentPage.value === totalPages.value - 1) {
-      pages = [currentPage.value - 2, currentPage.value - 1, currentPage.value, currentPage.value + 1]
-    }
-    else {
-      pages = [currentPage.value - 2, currentPage.value - 1, currentPage.value, currentPage.value + 1, currentPage.value + 2]
-    }
-    return pages;
-  }
+  const now = currentPage.value
+  const pages: Array<number> = [now - 2, now - 1, now, now + 1, now + 2]
+  return pages.filter(page => page > 0).filter(page => page <= totalPages.value)
 })
 const nextPage = () => {
   if (currentPage.value < totalPages.value) {
