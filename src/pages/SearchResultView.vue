@@ -3,7 +3,7 @@ import { computed, ref, watchEffect } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 
 import useApiRequest from '../composables/useApiRequest';
-import { searchMovie } from '../api/movieService';
+import { getNowPlaying, getPopular, getUpcomingMovie, searchMovie } from '../api/movieService';
 import { type MovieSimple } from '../types/Movie';
 
 import SearchBar from '../components/SearchBar.vue';
@@ -12,11 +12,29 @@ import SimpleCard from '../components/SimpleCard/SimpleCard.vue';
 const route = useRoute();
 const movies = ref<Array<MovieSimple>>([]);
 const currentPage = ref(1);
-const { data: result, loading, error, execute } = useApiRequest(searchMovie)
+const apiRequest = () => {
+  if ("t" in route.query) {
+    switch (route.query.t) {
+      case 'popular':
+        return getPopular;
+      case 'upcoming':
+        return getUpcomingMovie;
+      default:
+        return getNowPlaying;
+    }
+  } else {
+    return searchMovie
+  }
+}
+
+const { data: result, loading, error, execute } = useApiRequest(apiRequest())
 
 watchEffect(async () => {
-  await execute(route.query.s as string, currentPage.value);
-  console.log(currentPage.value)
+  if ('t' in route.query) {
+    await execute(currentPage.value)
+  } else {
+    await execute(route.query.s as string, currentPage.value);
+  }
   if (!result.value || 'status_message' in result.value) {
     error.value = `error fetching movies:", ${result.value?.status_message}`;
     return;

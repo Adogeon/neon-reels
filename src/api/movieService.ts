@@ -52,17 +52,20 @@ export const getMovieDetails = async (id: string) => {
     return fetchAPIData<MovieDetailsResponse>(url);
 }
 
-export const getUpcomingMovie = async () => {
-    const url = GET_UPCOMING_MOVIE_LIST_URL;
+export const getUpcomingMovie = async (page?: number) => {
+    const pageParam = `?page=${page ?? 1}`
+    const url = GET_UPCOMING_MOVIE_LIST_URL + pageParam;
     return fetchAPIData<MovieListResponse>(url);
 }
 
-export const getNowPlaying = async () => {
-    const url = GET_NOW_PLAYING_MOVIE_LIST_URL;
+export const getNowPlaying = async (page?: number) => {
+    const pageParam = `?page=${page ?? 1}`
+    const url = GET_NOW_PLAYING_MOVIE_LIST_URL + pageParam;
     return fetchAPIData<MovieListResponse>(url);
 }
 
-export const getPopular = async () => {
-    const url = GET_POPULAR_MOVIE_LIST_URL;
+export const getPopular = async (page?: number) => {
+    const pageParam = `?page=${page ?? 1}`
+    const url = GET_POPULAR_MOVIE_LIST_URL + pageParam;
     return fetchAPIData<MovieListResponse>(url);
 }

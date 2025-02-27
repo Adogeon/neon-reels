@@ -8,9 +8,9 @@ import SearchBar from '../SearchBar.vue';
             <router-link to="/" class="logo">Neon Reels</router-link>
 
             <ul class="nav-links">
-                <li><router-link to="/popular">Popular</router-link></li>
-                <li><router-link to="/now-playing">Now Playing</router-link></li>
-                <li><router-link to="/upcoming">Upcoming</router-link></li>
+                <li><router-link to="/search?t=popular">Popular</router-link></li>
+                <li><router-link to="/search?t=now-playing">Now Playing</router-link></li>
+                <li><router-link to="/search?t=upcoming">Upcoming</router-link></li>
             </ul>
 
             <SearchBar />
