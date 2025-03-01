@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script setup lang="ts">
 import { computed } from 'vue';
 
 const { currentPage, totalPages } = defineProps<{
@@ -19,19 +19,6 @@ const handlePageChange = (page: number) => {
     emit('goToPage', page);
 }
 
-const nextPage = () => {
-    if (currentPage < totalPages) {
-        handlePageChange(currentPage + 1);
-    }
-};
-
-const prevPage = () => {
-    if (currentPage > 1) {
-        handlePageChange(currentPage - 1);
-    }
-};
-
-
 </script>
 
 <template>
@@ -43,8 +30,8 @@ const prevPage = () => {
             {{ page }}
         </button>
         <span v-if="currentPage < totalPages - 2 && totalPages > 5">...</span>
-        <button @click="handlePageChange(totalPages)"
-            v-if="currentPage < totalPages - 2 && totalPages > 5">Last({{ totalPages }})</button>
+        <button @click="handlePageChange(totalPages)" v-if="currentPage < totalPages - 2 && totalPages > 5">Last({{
+            totalPages }})</button>
     </div>
 </template>
 

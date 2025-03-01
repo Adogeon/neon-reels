@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { type MovieSimple } from '../../types/Movie';
 import SimpleCard from '../SimpleCard/SimpleCard.vue';
