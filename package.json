@@ -2,6 +2,7 @@
   "name": "movie-recommend-app",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://adogeon.github.io/neon-reels/",
   "type": "module",
   "scripts": {
     "dev": "vite",
