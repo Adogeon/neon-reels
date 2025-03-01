@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 
 import useApiRequest from '../composables/useApiRequest';
 import { getNowPlaying, getPopular, getUpcomingMovie, searchMovie } from '../api/movieService';
@@ -8,10 +8,11 @@ import { type MovieSimple } from '../types/Movie';
 
 import SearchBar from '../components/SearchBar.vue';
 import SimpleCard from '../components/SimpleCard/SimpleCard.vue';
+import PaginationBar from '../components/PaginationBar/PaginationBar.vue';
 
+const router = useRouter();
 const route = useRoute();
 const movies = ref<Array<MovieSimple>>([]);
-const currentPage = ref(1);
 const apiRequest = () => {
   if ("t" in route.query) {
     switch (route.query.t) {
@@ -29,7 +30,9 @@ const apiRequest = () => {
 
 const { data: result, loading, error, execute } = useApiRequest(apiRequest())
 
+const currentPage = ref<number>(1);
 watchEffect(async () => {
+  currentPage.value = route.query.page !== undefined ? parseInt(route.query?.page as string) : 1;
   if ('t' in route.query) {
     await execute(currentPage.value)
   } else {
@@ -47,24 +50,9 @@ const selectMovie = ref<MovieSimple | null>(null);
 const toggleMovieDetails = (movie: MovieSimple) => {
   selectMovie.value = movie;
 }
-
-const totalPages = computed(() => result.value?.total_pages || 0);
-const visiblePages = computed(() => {
-  const now = currentPage.value
-  const pages: Array<number> = [now - 2, now - 1, now, now + 1, now + 2]
-  return pages.filter(page => page > 0).filter(page => page <= totalPages.value)
+const totalPages = computed(() => {
+  return result.value?.total_pages || 1
 })
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-  }
-};
-
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-  }
-};
 
 </script>
 
@@ -89,20 +77,8 @@ const prevPage = () => {
       <SimpleCard v-for="movie in movies" :poster="movie.poster_path" :title="movie.title" :key="`movie-${movie.id}`"
         @click="toggleMovieDetails(movie)" />
     </div>
-    <div class="pagination">
-      <button @click="prevPage" :disabled="currentPage === 1">
-        < </button>
-
-          <button @click="() => { currentPage = 1 }" v-if="currentPage > 3 && totalPages > 5">1</button>
-          <span v-if="currentPage > 3 && totalPages > 5">...</span>
-          <button v-for="page in visiblePages" :key="`page-${page}`" @click="() => currentPage = page">
-            {{ page }}
-          </button>
-          <span v-if="currentPage < totalPages - 2 && totalPages > 5">...</span>
-          <button @click="() => { currentPage = totalPages }" v-if="currentPage < totalPages - 2 && totalPages > 5">{{
-            totalPages }}</button>
-          <button @click="nextPage" :disabled="currentPage === totalPages">></button>
-    </div>
+    <PaginationBar :current-page="currentPage" :total-pages="totalPages"
+      @go-to-page="(page) => { router.push({ path: '/search', query: { ...route.query, page: page } }) }" />
   </section>
 </template>
 
