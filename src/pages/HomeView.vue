@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 <script setup lang="ts">
 
 import { getPopular, getNowPlaying, getUpcomingMovie } from '../api/movieService';
@@ -8,9 +7,9 @@ import { MovieSimple } from '../types/Movie';
 import MovieHorList from '../components/MovieHorList/MovieHorList.vue';
 import NavBar from "../components/NavBar/NavCore.vue";
 
-const { data: popularResult, error: popularError, loading: popularLoading, execute: fetchPopular } = useApiRequest(getPopular);
-const { data: nowPlayingResult, error: nowPlayingError, loading: nowPlayingLoading, execute: fetchNowPlaying } = useApiRequest(getNowPlaying);
-const { data: upcomingResult, error: upcomingError, loading: upcomingLoading, execute: fetchUpcoming } = useApiRequest(getUpcomingMovie);
+const { data: popularResult, execute: fetchPopular } = useApiRequest(getPopular);
+const { data: nowPlayingResult, execute: fetchNowPlaying } = useApiRequest(getNowPlaying);
+const { data: upcomingResult, execute: fetchUpcoming } = useApiRequest(getUpcomingMovie);
 
 watchEffect(async () => {
   await fetchPopular();
