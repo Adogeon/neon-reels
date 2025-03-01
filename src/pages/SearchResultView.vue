@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from 'vue';
-import { RouterLink, useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import useApiRequest from '../composables/useApiRequest';
 import { getNowPlaying, getPopular, getUpcomingMovie, searchMovie } from '../api/movieService';
@@ -46,10 +46,6 @@ watchEffect(async () => {
 }
 )
 
-const selectMovie = ref<MovieSimple | null>(null);
-const toggleMovieDetails = (movie: MovieSimple) => {
-  selectMovie.value = movie;
-}
 const totalPages = computed(() => {
   return result.value?.total_pages || 1
 })
@@ -65,17 +61,9 @@ const totalPages = computed(() => {
     <h1>Something is horribly wrongs! Please try again</h1>
   </section>
   <section v-else id="result-area">
-    <div v-if="selectMovie" class="select-movie">
-      <p>{{ selectMovie.overview }}</p>
-      <p><strong>Release Date:</strong>{{ selectMovie.release_date }}</p>
-      <div>
-        <RouterLink :to="`/details/${selectMovie.id}`">Further Details ...</RouterLink>
-      </div>
-      <button @click.stop="selectMovie = null">Close</button>
-    </div>
     <div class="result-grid">
       <SimpleCard v-for="movie in movies" :poster="movie.poster_path" :title="movie.title" :key="`movie-${movie.id}`"
-        @click="toggleMovieDetails(movie)" />
+        @click="router.push({ path: `/details/${movie.id}` })" />
     </div>
     <PaginationBar :current-page="currentPage" :total-pages="totalPages"
       @go-to-page="(page) => { router.push({ path: '/search', query: { ...route.query, page: page } }) }" />
